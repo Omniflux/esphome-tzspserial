@@ -1,0 +1,70 @@
+substitutions:
+  name: tzspserial
+  device_name: tzspserial
+  friendly_name: TZSP Serial
+  
+external_components:
+  - source: github://Omniflux/esphome-tzspserial
+
+esphome:
+  name: ${device_name}
+
+esp32:
+  board: esp32-poe-iso
+  framework:
+    type: esp-idf
+
+api:
+
+sensor:    
+- platform: uptime
+  name: "${friendly_name} Uptime"
+  id: "${device_name}_uptime"
+  update_interval: 60s
+
+text_sensor:
+- platform: version
+  name: "${friendly_name} ESPHome Version"
+  id: "${device_name}_esphome_version"
+
+button:
+- platform: restart
+  name: Restart device
+  id: restart_internal
+  entity_category: config 
+- platform: safe_mode
+  name: Safe Mode Boot
+  entity_category: diagnostic
+
+logger:
+  level: DEBUG
+
+ota:
+  password: !secret ota_password
+
+ethernet:
+  type: LAN8720
+  mdc_pin: GPIO23
+  mdio_pin: GPIO18
+  clk_mode: GPIO17_OUT
+  phy_addr: 0
+  power_pin: GPIO12
+  manual_ip:
+    static_ip: 192.168.1.200
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+  use_address: 192.168.1.200
+
+uart:
+  tx_pin: GPIO13
+  rx_pin: GPIO14
+  baud_rate: 500
+  parity: EVEN
+
+tzsp_serial:
+  frame_size: 8
+  inverted: true
+  tzsp:
+    ip: 192.168.1.10
+#    port: 37008
+    protocol: 255
