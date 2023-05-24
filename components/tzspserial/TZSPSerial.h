@@ -11,11 +11,6 @@ namespace tzspserial {
 
 static const auto TAG = "tzsp_serial";
 
-enum class DuplicateDetection {
-  SEQUENTIAL,
-  INDEX_FIRST_BYTE
-};
-
 [[noreturn]] void uart_event_task(void* pvParameters);
 
 class TZSPSerial : public Component, public uart::UARTDevice {
