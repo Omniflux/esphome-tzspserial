@@ -11,8 +11,6 @@ namespace tzspserial {
 
 static const auto TAG = "tzsp_serial";
 
-[[noreturn]] void uart_event_task(void* pvParameters);
-
 class TZSPSerial : public Component, public uart::UARTDevice {
   public:
     TZSPSerial(uart::IDFUARTComponent *parent) : uart::UARTDevice(parent) {}
@@ -39,7 +37,7 @@ class TZSPSerial : public Component, public uart::UARTDevice {
     struct sockaddr_in destination;
     uart::IDFUARTComponent* idf_uart;
 
-  friend void uart_event_task(void *pvParameters);
+    [[noreturn]] void uart_event_task();
 };
 
 }
