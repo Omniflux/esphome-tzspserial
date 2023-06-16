@@ -4,10 +4,16 @@ substitutions:
   friendly_name: TZSP Serial
   
 external_components:
+  - source: github://Omniflux/esphome-tzsp
   - source: github://Omniflux/esphome-tzspserial
 
 esphome:
   name: ${device_name}
+  platformio_options:
+    build_flags:
+    - -std=gnu++2a
+    build_unflags:
+    - -std=gnu++11
 
 esp32:
   board: esp32-poe-iso
