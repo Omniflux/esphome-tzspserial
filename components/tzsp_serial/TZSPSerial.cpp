@@ -17,7 +17,7 @@ void TZSPSerial::setup() {
 
 void TZSPSerial::dump_config() {
     ESP_LOGCONFIG(TAG, "TZSPSerial");
-    ESP_LOGCONFIG(TAG, "  Destination: %s:%u", static_cast<network::IPAddress>(this->sockaddr_in_.sin_addr.s_addr).str().c_str(), ntohs(this->sockaddr_in_.sin_port));
+    ESP_LOGCONFIG(TAG, "  Destination: %s:%u", static_cast<network::IPAddress>(this->tzsp_sockaddr_in_.sin_addr.s_addr).str().c_str(), ntohs(this->tzsp_sockaddr_in_.sin_port));
     ESP_LOGCONFIG(TAG, "  Protocol: %u", ntohs(this->tzsp_protocol_));
     ESP_LOGCONFIG(TAG, "  Frame size: %u", this->frame_size_);
     ESP_LOGCONFIG(TAG, "  Inverted: %s", this->inverted_ ? "YES" : "NO");
