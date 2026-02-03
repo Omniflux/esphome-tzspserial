@@ -4,16 +4,24 @@
 
 #include "TZSPSerial.h"
 
-namespace esphome {
-namespace tzspserial {
+namespace esphome::tzspserial {
+
+static const auto TAG = "esphome::tzsp_serial";
 
 void TZSPSerial::setup() {
     constexpr uint32_t stack_depth = 4096; // Not optimized
     constexpr UBaseType_t task_priority = 12; // Not optimized
 
-    int err = uart_set_rx_timeout(this->idf_uart->get_hw_serial_number(), this->symbol_timeout_);
+    int err = uart_set_rx_timeout(static_cast<uart_port_t>(static_cast<uart::IDFUARTComponent*>(this->parent_)->get_hw_serial_number()), this->symbol_timeout_);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Failed to set UART RX timeout: %s", esp_err_to_name(err));
+        this->mark_failed();
+        return;
+    }
+
+    err = uart_set_rx_full_threshold(static_cast<uart_port_t>(static_cast<uart::IDFUARTComponent*>(this->parent_)->get_hw_serial_number()), this->frame_size_ * 4);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set UART RX full threshold: %s", esp_err_to_name(err));
         this->mark_failed();
         return;
     }
@@ -26,8 +34,8 @@ void TZSPSerial::setup() {
 }
 
 void TZSPSerial::dump_config() {
-    char buf[INET_ADDRSTRLEN]; \
-    inet_ntop(this->tzsp_sockaddr_in_.sin_family, &this->tzsp_sockaddr_in_.sin_addr, buf, INET_ADDRSTRLEN); \
+    char buf[INET_ADDRSTRLEN];
+    inet_ntop(this->tzsp_sockaddr_in_.sin_family, &this->tzsp_sockaddr_in_.sin_addr, buf, INET_ADDRSTRLEN);
 
     ESP_LOGCONFIG(TAG, "TZSPSerial");
     ESP_LOGCONFIG(TAG, "  Destination: %s:%u", buf, ntohs(this->tzsp_sockaddr_in_.sin_port));
@@ -56,7 +64,7 @@ void TZSPSerial::uart_event_task() {
                 [[likely]] case UART_DATA:
                     size_t bufferLen;
 
-                    uart_get_buffered_data_len(static_cast<uart::IDFUARTComponent*>(this->parent_)->get_hw_serial_number(), &bufferLen);
+                    uart_get_buffered_data_len(static_cast<uart_port_t>(static_cast<uart::IDFUARTComponent*>(this->parent_)->get_hw_serial_number()), &bufferLen);
                     if (auto discard = bufferLen % buffer.size()) {
                         std::vector<uint8_t> discard_buffer(discard);
 
@@ -80,5 +88,4 @@ void TZSPSerial::uart_event_task() {
     }
 }
 
-}
 }

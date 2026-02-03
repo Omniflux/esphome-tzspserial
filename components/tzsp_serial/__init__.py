@@ -2,11 +2,11 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 
 from esphome import pins
-from esphome.components import uart
+from esphome.components import tzsp, uart
 from esphome.const import CONF_ID
+from esphome.types import ConfigType
 
-from esphome.components import tzsp
-
+CODEOWNERS = ["@Omniflux"]
 AUTO_LOAD = ["tzsp"]
 DEPENDENCIES = ["tzsp", "uart"]
 
@@ -26,7 +26,7 @@ CONFIG_SCHEMA = cv.Schema(
     }
 ).extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA).extend(tzsp.TZSP_SENDER_SCHEMA)
 
-async def to_code(config):
+async def to_code(config: ConfigType) -> None:
     var = cg.new_Pvariable(config[CONF_ID], await cg.get_variable(config[uart.CONF_UART_ID]))
     await cg.register_component(var, config)
     await tzsp.register_tzsp_sender(var, config)

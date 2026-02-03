@@ -6,10 +6,7 @@
 
 #include <esphome/components/tzsp/tzsp.h>
 
-namespace esphome {
-namespace tzspserial {
-
-static const auto TAG = "tzsp_serial";
+namespace esphome::tzspserial {
 
 class TZSPSerial : public Component, public uart::UARTDevice, public tzsp::TZSPSender {
   public:
@@ -30,11 +27,8 @@ class TZSPSerial : public Component, public uart::UARTDevice, public tzsp::TZSPS
     uint16_t tzsp_discard_protocol_{};
 
   private:
-    uart::IDFUARTComponent* idf_uart;
-
     [[noreturn]] void uart_event_task();
     void load_buffer(std::vector<uint8_t>& buffer);
 };
 
-}
 }
