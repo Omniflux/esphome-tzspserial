@@ -32,6 +32,8 @@ async def to_code(config: ConfigType) -> None:
     await tzsp.register_tzsp_sender(var, config)
     await uart.register_uart_device(var, config)
 
+    uart.request_wake_loop_on_rx()
+
     cg.add(var.set_frame_size(config[CONF_FRAME_SIZE]))
     cg.add(var.set_symbol_timeout(config[CONF_SYMBOL_TIMEOUT]))
     cg.add(var.set_inverted(config[CONF_INVERTED]))
